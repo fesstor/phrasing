@@ -1,6 +1,5 @@
 require 'phrasing'
 require "phrasing/implementation"
-require "phrasing/simple"
 require "phrasing/serializer"
 require 'jquery-rails'
 require 'jquery-cookie-rails'
@@ -25,6 +24,7 @@ module Phrasing
   mattr_accessor :route
   mattr_accessor :staging_server_endpoint
   mattr_accessor :parent_controller
+  mattr_accessor :override_i18n
 
   @@parent_controller = "ApplicationController"
   @@route = 'phrasing'
@@ -40,6 +40,14 @@ module Phrasing
 
   def self.setup
     yield self
+
+    override_i18n_lookup if @@override_i18n == true
+  end
+
+  def self.override_i18n_lookup
+    I18n::Backend::Simple.class_eval do
+      include Phrasing::Implementation
+    end
   end
 
   WHITELIST = "PhrasingPhrase.value"
