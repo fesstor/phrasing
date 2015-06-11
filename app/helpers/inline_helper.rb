@@ -40,7 +40,7 @@ module InlineHelper
         @record = PhrasingPhrase.where(key: key, locale: I18n.locale.to_s).first || PhrasingPhrase.search_i18n_and_create_phrase(key)
         inline(@record, :value, options)
       else
-        options.try(:[], :interpolation) ? t(key, options[:interpolation]).html_safe : t(key).html_safe
+        PhrasingPhrase.where(locale: locale.to_s, key: key).first.value.html_safe
       end
     end
 
